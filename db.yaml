@@ -1,0 +1,10 @@
+myqldb:
+ adapter: mysql
+ host: localhost 
+ username: root 
+ password: 
+ database: logs
+
+devsqlite:
+ adapter: sqlite3
+ dbfile: logs.db
