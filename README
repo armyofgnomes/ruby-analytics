@@ -1,0 +1,4 @@
+Run 'ruby logparser.rb logs/LOGFILE_MONTH.gz'
+Choose to create a new site for the logs
+
+Next run 'ruby logviewer.rb' and pick the site you created. Enter in the year and month in a YYYY-MM format and it will create an XML file in the xml directory.

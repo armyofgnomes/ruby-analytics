@@ -38,4 +38,3 @@ while i <= total
   end
   group += gsize + 1
 end
-
