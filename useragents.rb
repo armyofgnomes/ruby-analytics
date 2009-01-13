@@ -11,8 +11,13 @@ class UserAgent
       #UA String - Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11 
 	def initialize(user_agent_string)
         @uastring = user_agent_string.gsub(/\+/, " ")
+        self.platform?()
+        self.browser?()
+        self.robot?()
+        self.is_robot?()
+        self.requires_human?()
 	end 
-	def platform()
+	def platform?()
   		@@platforms.each_key do |plat|   
             if /#{plat}/i =~ @uastring 
               @plat = @@platforms[plat]
@@ -24,7 +29,7 @@ class UserAgent
         	return @plat	
         end
 	end
-	def browser()
+	def browser?()
 	  	@@browsers.each do |nick|
 	        if /#{nick.keys}/i =~ @uastring
 	          @brow = nick.values.to_s
@@ -43,11 +48,7 @@ class UserAgent
 	 		return @brow + " " + @brwver
 	 	end
 	end
-  def requires_human()
-    is_robot?
-    platform
-    browser
-    robot
+  def requires_human?()
     if @bot.nil? && @brow.nil? && @plat.nil?
       return 1
     else
@@ -55,14 +56,13 @@ class UserAgent
     end
   end 
 	def is_robot?()
-		robot
 		if @bot.nil?
-        	return 0
-        else
-        	return 1
-        end
+      return 0
+    else
+    	return 1
+    end
 	end    
-	def robot()
+	def robot?()
   		@@robots.each_key do |bot|
         	if /#{bot}/i =~ @uastring 
               @bot = @@robots[bot]
@@ -80,27 +80,24 @@ class UserAgent
         end   
     end
 	def to_s()
-		platform
-		browser
-		robot
-        if @plat.nil? && @brow.nil? && @bot.nil?
-          @uastring
-        end
-        if @plat.nil?
-          @plat = "Unknown"
-        end
-        if @brow.nil?
-          @brow = "Unknown"
-          @brwver = ""
-        end
-        if @bot.nil? || @bot.chomp == ""
-        	if @plat == "-" && @brow == "-"
-        	"UA String: " + @uastring
-        	else
-        	"Platform: " + @plat + ", Browser: " + @brow + " " + @brwver 
-        	end
-        else
-        "Crawler: " + @bot + " - " + @botlink
-        end
+    if @plat.nil? && @brow.nil? && @bot.nil?
+      @uastring
+    end
+    if @plat.nil?
+      @plat = "Unknown"
+    end
+    if @brow.nil?
+      @brow = "Unknown"
+      @brwver = ""
+    end
+    if @bot.nil? || @bot.chomp == ""
+    	if @plat == "-" && @brow == "-"
+    	"UA String: " + @uastring
+    	else
+    	"Platform: " + @plat + ", Browser: " + @brow + " " + @brwver 
+    	end
+    else
+    "Crawler: " + @bot + " - " + @botlink
+    end
 	end 
 end

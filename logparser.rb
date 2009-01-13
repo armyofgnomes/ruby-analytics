@@ -139,7 +139,7 @@ while line = inpfile.gets
       f.print "LINE: ", line, "\n"
       f.close
     else
-      Logs.create({:host => le.host, :logdate => le.date, :referer => le.referer, :referermd5 => Digest::MD5.hexdigest(le.referer), :url => le.url, :urlmd5 => Digest::MD5.hexdigest(le.url), :ua => le.ua, :user => le.user, :auth => le.auth, :rcode => le.rcode, :nbytes => le.nbytes, :site => id, :platform => ua.platform, :browser => ua.browser, :is_robot => ua.is_robot?, :robot => ua.robot, :requires_human => ua.requires_human, :timestamp => Time.now.strftime("%Y-%m-%d %H:%M:%S")})
+      Logs.create({:host => le.host, :logdate => le.date, :referer => le.referer, :referermd5 => Digest::MD5.hexdigest(le.referer), :url => le.url, :urlmd5 => Digest::MD5.hexdigest(le.url), :ua => le.ua, :user => le.user, :auth => le.auth, :rcode => le.rcode, :nbytes => le.nbytes, :site => id, :platform => ua.platform?, :browser => ua.browser?, :is_robot => ua.is_robot?, :robot => ua.robot?, :requires_human => ua.requires_human?, :timestamp => Time.now.strftime("%Y-%m-%d %H:%M:%S")})
     end
     #print le, "\n"
     percentdone = ((nlines.to_f/tlines)*100).ceil
