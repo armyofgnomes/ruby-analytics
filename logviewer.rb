@@ -259,31 +259,10 @@ x = Builder::XmlMarkup.new :indent => 2
                 begin
                   webpage = agent.get('http://' + siteurl + pageitem[:url])
                   pagename = webpage.title.strip if defined?(webpage.title.strip) && defined?(webpage) && !webpage.title.strip.nil? && webpage.title.strip != '' && webpage.title != "OpenDNS"
-                  #NPLS Special Stuff
-                  if siteid == 13
-                    category = agent.get('http://' + siteurl + pageitem[:url]).search("//div[@id='bcrumbnav']").inner_html
-                    if /Child Support/.match(category) || /Child Support/.match(pagename)
-                      pageclass = "child_support"
-                      puts 'Child Support'
-                    elsif /Housing/.match(category) || /Landlord Tenant Handbook/.match(category)  || /Housing/.match(pagename) || /Landlord Tenant Handbook/.match(pagename)
-                      pageclass = "housing"
-                      puts 'Housing'
-                    else
-                      pageclass = nil
-                    end
-                  end
-                  #End NPLS Stuff
                 rescue
                   pagename = pageitem[:url]
                 end
               end
-              #NPLS Stuff, remove if statement to remove
-              if siteid == 13 && !pageclass.nil?
-                x.page(pagename, 'href' => 'http://' + siteurl + pageitem[:url], 'rank' => i, 'count' => pageitem[:count], 'class' => pageclass)
-              else
-                x.page(pagename, 'href' => 'http://' + siteurl + pageitem[:url], 'rank' => i, 'count' => pageitem[:count])
-              end
-              #End NPLS Stuff
               i += 1
             end
           end
