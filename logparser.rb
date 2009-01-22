@@ -131,7 +131,8 @@ while line = inpfile.gets
     ua = UserAgent.new(le.ua)
     #Check for Duplicates First
     #chkdupes = Logs.connection.select_all("select * from logs where host = '#{le.host}' and logdate = '#{le.date}' and referer = '#{le.referer}' and url = '#{le.url}' and ua = '#{le.ua}' and user = '#{le.user}' and auth = '#{le.auth}' and rcode = '#{le.rcode}' and nbytes = '#{le.nbytes}' and site = '#{id}'")
-    if Logs.exists?(:host => le.host, :logdate => le.date, :referer => le.referer, :url => le.url, :ua => le.ua, :user => le.user, :auth => le.auth, :rcode => le.rcode, :nbytes => le.nbytes, :site => id)
+    line_sha1 = Digest::SHA1.hexdigest(le.hose + le.date + le.referer + le.referer + le.url + le.ua + le.user + le.auth + le.rcode + le.nbytes + id)
+    if Logs.exists?(:sha1 => line_sha1)
     #if !chkdupes.nil?
       puts "Duplicate Entry, Skipping\n"
       f = File.open(filename + 'errors' + Time.now.strftime("%Y-02") + ".txt", "a")
@@ -139,7 +140,7 @@ while line = inpfile.gets
       f.print "LINE: ", line, "\n"
       f.close
     else
-      Logs.create({:host => le.host, :logdate => le.date, :referer => le.referer, :referermd5 => Digest::MD5.hexdigest(le.referer), :url => le.url, :urlmd5 => Digest::MD5.hexdigest(le.url), :ua => le.ua, :user => le.user, :auth => le.auth, :rcode => le.rcode, :nbytes => le.nbytes, :site => id, :platform => ua.platform?, :browser => ua.browser?, :is_robot => ua.is_robot?, :robot => ua.robot?, :requires_human => ua.requires_human?, :timestamp => Time.now.strftime("%Y-%m-%d %H:%M:%S")})
+      Logs.create({:sha1 => line_sha1), :host => le.host, :logdate => le.date, :referer => le.referer, :url => le.url, :ua => le.ua, :user => le.user, :auth => le.auth, :rcode => le.rcode, :nbytes => le.nbytes, :site => id, :platform => ua.platform?, :browser => ua.browser?, :is_robot => ua.is_robot?, :robot => ua.robot?, :requires_human => ua.requires_human?, :timestamp => Time.now.strftime("%Y-%m-%d %H:%M:%S")})
     end
     #print le, "\n"
     percentdone = ((nlines.to_f/tlines)*100).ceil
