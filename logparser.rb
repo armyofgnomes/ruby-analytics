@@ -77,7 +77,7 @@ if id == "n"
 	puts "FTP Password?"
 	password = $stdin.gets.chomp!
 	#Add new site to sites table
-	Sites.create(:name => newsite, :url => address, :username => username, :password => password)
+	Sites.create(:name => newsite, :url => address, :username => username, :password => password, :timestamp => Time.now.strftime("%Y-%m-%d %H:%M:%S"))
 	site = Sites.find(:first, :conditions => [ "name = ?", newsite])
 else
   site = Sites.find(:first, :conditions => "id = #{id}")
@@ -131,7 +131,7 @@ while line = inpfile.gets
     ua = UserAgent.new(le.ua)
     #Check for Duplicates First
     #chkdupes = Logs.connection.select_all("select * from logs where host = '#{le.host}' and logdate = '#{le.date}' and referer = '#{le.referer}' and url = '#{le.url}' and ua = '#{le.ua}' and user = '#{le.user}' and auth = '#{le.auth}' and rcode = '#{le.rcode}' and nbytes = '#{le.nbytes}' and site = '#{id}'")
-    line_sha1 = Digest::SHA1.hexdigest(le.hose + le.date + le.referer + le.referer + le.url + le.ua + le.user + le.auth + le.rcode + le.nbytes + id)
+    line_sha1 = Digest::SHA1.hexdigest(le.host.to_s + le.date.to_s + le.referer.to_s + le.referer.to_s + le.url.to_s + le.ua.to_s + le.user.to_s + le.auth.to_s + le.rcode.to_s + le.nbytes.to_s + id.to_s)
     if Logs.exists?(:sha1 => line_sha1)
     #if !chkdupes.nil?
       puts "Duplicate Entry, Skipping\n"
@@ -140,7 +140,7 @@ while line = inpfile.gets
       f.print "LINE: ", line, "\n"
       f.close
     else
-      Logs.create({:sha1 => line_sha1), :host => le.host, :logdate => le.date, :referer => le.referer, :url => le.url, :ua => le.ua, :user => le.user, :auth => le.auth, :rcode => le.rcode, :nbytes => le.nbytes, :site => id, :platform => ua.platform?, :browser => ua.browser?, :is_robot => ua.is_robot?, :robot => ua.robot?, :requires_human => ua.requires_human?, :timestamp => Time.now.strftime("%Y-%m-%d %H:%M:%S")})
+      Logs.create({:sha1 => line_sha1, :host => le.host, :logdate => le.date, :referer => le.referer, :url => le.url, :ua => le.ua, :user => le.user, :auth => le.auth, :rcode => le.rcode, :nbytes => le.nbytes, :site => id, :platform => ua.platform?, :browser => ua.browser?, :is_robot => ua.is_robot?, :robot => ua.robot?, :requires_human => ua.requires_human?, :timestamp => Time.now.strftime("%Y-%m-%d %H:%M:%S")})
     end
     #print le, "\n"
     percentdone = ((nlines.to_f/tlines)*100).ceil
