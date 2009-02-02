@@ -123,26 +123,24 @@ inpfile = File.open(filename)
 File.open(filename, 'r') { |line|
     tlines += 1 while line.gets
 }
-Logs.transaction do
-  while line = inpfile.gets
-    preperdone = ((nlines.to_f/tlines)*100).ceil
-    nlines += 1
-    begin
-      le = LogEntry.new(line)
-      ua = UserAgent.new(le.ua)
-      line_sha1 = Digest::SHA1.hexdigest(le.host.to_s + le.date.to_s + le.referer.to_s + le.referer.to_s + le.url.to_s + le.ua.to_s + le.user.to_s + le.auth.to_s + le.rcode.to_s + le.nbytes.to_s + id.to_s)
-      Logs.create({:sha1 => line_sha1, :host => le.host, :logdate => le.date, :referer => le.referer, :url => le.url, :ua => le.ua, :user => le.user, :auth => le.auth, :rcode => le.rcode, :nbytes => le.nbytes, :site => id, :platform => ua.platform?, :browser => ua.browser?, :is_robot => ua.is_robot?, :robot => ua.robot?, :requires_human => ua.requires_human?, :timestamp => Time.now.strftime("%Y-%m-%d %H:%M:%S")})
-      #print le, "\n"
-      percentdone = ((nlines.to_f/tlines)*100).ceil
-      print percentdone, " Percent Done \n" if (percentdone % 5 == 0) && (preperdone != percentdone)
-    rescue
-      #print "Log entry parse failed at line: ", (nlines), ", error: ", $!, "\n"
-      #print "LINE: ", line, "\n"
-      f = File.open(filename + 'errors' + Time.now.strftime("%Y-02") + ".txt", "a")
-      f.print "Log entry parse failed at line: ", (nlines), ", error: ", $!, "\n"
-      f.print "LINE: ", line, "\n"
-      f.close
-    end
+while line = inpfile.gets
+  preperdone = ((nlines.to_f/tlines)*100).ceil
+  nlines += 1
+  begin
+    le = LogEntry.new(line)
+    ua = UserAgent.new(le.ua)
+    line_sha1 = Digest::SHA1.hexdigest(le.host.to_s + le.date.to_s + le.referer.to_s + le.referer.to_s + le.url.to_s + le.ua.to_s + le.user.to_s + le.auth.to_s + le.rcode.to_s + le.nbytes.to_s + id.to_s)
+    Logs.create({:sha1 => line_sha1, :host => le.host, :logdate => le.date, :referer => le.referer, :url => le.url, :ua => le.ua, :user => le.user, :auth => le.auth, :rcode => le.rcode, :nbytes => le.nbytes, :site => id, :platform => ua.platform?, :browser => ua.browser?, :is_robot => ua.is_robot?, :robot => ua.robot?, :requires_human => ua.requires_human?, :timestamp => Time.now.strftime("%Y-%m-%d %H:%M:%S")})
+    #print le, "\n"
+    percentdone = ((nlines.to_f/tlines)*100).ceil
+    print percentdone, " Percent Done \n" if (percentdone % 5 == 0) && (preperdone != percentdone)
+  rescue
+    #print "Log entry parse failed at line: ", (nlines), ", error: ", $!, "\n"
+    #print "LINE: ", line, "\n"
+    f = File.open(filename + 'errors' + Time.now.strftime("%Y-02") + ".txt", "a")
+    f.print "Log entry parse failed at line: ", (nlines), ", error: ", $!, "\n"
+    f.print "LINE: ", line, "\n"
+    f.close
   end
 end
 #Zip the file back up
